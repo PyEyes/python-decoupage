@@ -4,7 +4,9 @@
     Module de parsing pour les fichiers stl
 """
 
-from struct import unpack
+# import binascii
+# from struct import unpack
+import geometrie
 
 class ParseurStl:
     """
@@ -12,11 +14,25 @@ class ParseurStl:
     """
     def __init__(self, p_chemin_fichier_stl):
         self.chemin_fichier_stl = p_chemin_fichier_stl
+        self.triangles = []
         with open(self.chemin_fichier_stl, "rb") as stl:
-            self.contenu = unpack("<IIII", stl.read())
+            # Stockage du contenu entier du fichier en binaire
+            self.contenu = [bin(i)[2:]for i in stl.read()]
+            self.entete = self.contenu[:80] # 0 -> 79 = 80 bytes
+            nombre_triangle_binaire = ''.join(self.contenu[80:84]) # 80 -> 83 = 4 bytes
+            self.nombre_triangle = int(nombre_triangle_binaire, 2)
+            self.corps = self.contenu[84:]
 
-    def lire_stl(self):
+    def convertir_en_triangles(self):
         """
-            Lit un fichier stl et stocke ce qu'il lit dans des objets a part
+            Parse le corps pour transformer le contenu en triangle
         """
-        pass
+        # Todo: parcourir le corps, puis parser pour obtenir des triangles
+        #           que l'on stockera ensuite dans triangle
+        # Un triangle => sur 50 octets
+        corps = self.corps
+        triangle_binaire = corps[0:49]
+        # Possibilite: Optimiser len(corps)
+        while len(corps) >= 2:
+            corps = corps[0:49]
+            # TODO : Transformer un byte en float

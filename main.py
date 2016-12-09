@@ -4,9 +4,9 @@
     Fichier principal du projet decoupage.py
 """
 
+import argparse
 from parser_stl import ParseurStl
 
-import argparse
 
 PARSER_GENERAL = argparse.ArgumentParser()
 PARSER_GENERAL.add_argument('--chemin', type=str)
@@ -19,6 +19,7 @@ def test_lecture_rapide_stl():
     chemin_fichier_stl = ARGUMENTS.chemin
     parseur = ParseurStl(chemin_fichier_stl)
     print(parseur.contenu)
+    print("Nb triangle : ", parseur.nombre_triangle)
 
 def main():
     """
