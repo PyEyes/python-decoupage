@@ -2,10 +2,14 @@
 
 """
     Module de parsing pour les fichiers stl
+    TODO : Stocker le segment d'intersection entre les deux plans
+            => Slicing par rapport a z
+            => Comment le stocker ? Equation ?
+            => Coordonnees points départ/arrivée en deux dimensionss
+            => Voir pour la notion d'echelle
 """
 
-# import binascii
-# from struct import unpack
+import struct
 import geometrie
 
 class ParseurStl:
@@ -15,24 +19,25 @@ class ParseurStl:
     def __init__(self, p_chemin_fichier_stl):
         self.chemin_fichier_stl = p_chemin_fichier_stl
         self.triangles = []
+        # with open(self.chemin_fichier_stl, "rb") as stl:
+        #     # Stockage du contenu entier du fichier en binaire
+        #     self.contenu = [bin(i)[2:]for i in stl.read()]
+        #     self.entete = self.contenu[:80] # 0 -> 79 = 80 bytes
+        #     nombre_triangle_binaire = ''.join(self.contenu[80:84]) # 80 -> 83 = 4 bytes
+        #     self.nombre_triangle = int(nombre_triangle_binaire, 2)
+        #     self.corps = stl.read()[84:]
         with open(self.chemin_fichier_stl, "rb") as stl:
             # Stockage du contenu entier du fichier en binaire
-            self.contenu = [bin(i)[2:]for i in stl.read()]
-            self.entete = self.contenu[:80] # 0 -> 79 = 80 bytes
-            nombre_triangle_binaire = ''.join(self.contenu[80:84]) # 80 -> 83 = 4 bytes
-            self.nombre_triangle = int(nombre_triangle_binaire, 2)
-            self.corps = self.contenu[84:]
-
-    def convertir_en_triangles(self):
-        """
-            Parse le corps pour transformer le contenu en triangle
-        """
-        # Todo: parcourir le corps, puis parser pour obtenir des triangles
-        #           que l'on stockera ensuite dans triangle
-        # Un triangle => sur 50 octets
-        corps = self.corps
-        triangle_binaire = corps[0:49]
-        # Possibilite: Optimiser len(corps)
-        while len(corps) >= 2:
-            corps = corps[0:49]
-            # TODO : Transformer un byte en float
+            self.entete = stl.read(80)
+            self.nombre_triangle = struct.unpack("<i", stl.read(4))[0]
+            self.triangles = []
+            for _ in range(self.nombre_triangle):
+                coordonnees = []
+                for _ in range(4):
+                    vecteur = []
+                    for _ in range(3):
+                        vecteur.append(struct.unpack("<f", stl.read(4))[0])
+                    coordonnees.append(vecteur)
+                self.triangles.append(geometrie.Triangle(coordonnees))
+                # 2 bytes de vide
+                stl.read(2)
