@@ -15,6 +15,12 @@ class Triangle:
         # Utilisation des tuples au lieu des classes => optimisation
         self.vecteur_normal = p_liste_coordonnees[0]
         self.points = p_liste_coordonnees[1:]
+        pts_a = self.points[0]
+        equation_constante = self.vecteur_normal[0]*pts_a[0] + \
+                                self.vecteur_normal[1]*pts_a[1] + \
+                                    self.vecteur_normal[2]*pts_a[2]
+        self.equation = [self.vecteur_normal[0], self.vecteur_normal[1], equation_constante]
+
     def __str__(self):
         chaine = "n("+ ", ".join([str(round(e, 2)) for e in self.vecteur_normal])+"), "
         for indice, vecteur in enumerate(self.points):
@@ -24,3 +30,57 @@ class Triangle:
             chaine += "), "
         # Enleve les deux derniers caracteres
         return chaine[:-2]
+
+class Intersector:
+    """
+        Gere les intersection entre un plan et une liste de triangle
+    """
+    def __init__(self, p_triangles, p_coordonnes_plan):
+        self.triangles = p_triangles
+        self.plan = p_coordonnes_plan
+
+    def intersection_triangle_plan(self, triangle, plan):
+        """
+            Regarde si un triangle presente une intersection avec le plan ou non
+        """
+        # test des 3 cas
+        # Cas de base
+        secants = True
+        # Triangle doit etre une equation !!
+        for triangle_point, plan_point in zip(triangle, plan):
+            if triangle_point % plan_point == 0 or plan_point % triangle_point == 0:
+                secants = False
+        if secants:
+            print("C'est secant")
+        else:
+            print("Ce n'est pas secant")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# heyds
