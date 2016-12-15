@@ -5,7 +5,7 @@
 """
 
 import argparse
-from geometrie import Intersector, Triangle
+from geometrie import Intersector, Triangle, colineaires
 from parser_stl import ParseurStl
 
 PARSER_GENERAL = argparse.ArgumentParser()
@@ -38,8 +38,15 @@ def test_intersection():
     # Intersection
     equation_plan = [0, 0, 1]
     intersecteur = Intersector(triangles_listes, equation_plan)
-    # resultat_intersection = intersecteur.intersection_triangle_plan(tri_un, equation_plan)
-    # print(resultat_intersection)
+    resultat_intersection = intersecteur.intersection_triangle_plan(tri_un.equation, equation_plan)
+    print(resultat_intersection)
+
+def test_colinaires():
+    """
+        test colineaire
+    """
+    print(colineaires([0, 1, 5], [5, 7, 8]))
+    print(colineaires([1, 1, 1], [2, 2, 2]))
 
 def test_parser_stl():
     """
@@ -57,7 +64,8 @@ def main():
     """
     # print("Hello World !")
     # test_parser_stl()
-    test_intersection()
+    # test_intersection()
+    test_colinaires()
 
 if __name__ == '__main__':
     main()
