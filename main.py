@@ -10,7 +10,8 @@ import svg
 import parser_stl
 
 # TRAITEMENT DES ARGUMENTS
-PARSER_GENERAL = argparse.ArgumentParser(description="slice an STL file", \
+PARSER_GENERAL = argparse.ArgumentParser(description="slice an STL file : Problem of scaling,\
+                                        zoom out to see the figure", \
                     epilog="slice given stlfile into SLICES horizontal slices.\
                         Writes a numbered output svg file for each slice (horizontal way)")
 PARSER_GENERAL.add_argument('stl_file', type=str, help="name of stl file to slice (default is 4)")
@@ -27,10 +28,18 @@ if ARGUMENTS.slices != None:
 else:
     NOMBRE_TRANCHES = 4
 
-
-HAUTEUR = 600
-LARGEUR = 400
-COEFFICIENT = 80
+def calculer_bon_format(x_min, x_max, y_min, y_max):
+    """
+        Calcule le bon format de l'image
+        Renvoit les bonnes dimensions et le bon coefficient d'echelle
+        => Probleme de cadrage dans la feuille, figure eloignee
+        du centre de la feuille (dezoom)
+    """
+    delta_x = x_max - x_min
+    delta_y = y_max - y_min
+    # Image optimale : aux alentours de 800px
+    coefficient = 800/(max([delta_x, delta_y]))
+    return 1200, 1200, coefficient
 
 def main():
     """
@@ -38,7 +47,8 @@ def main():
     """
     parseur = parser_stl.ParseurStl(CHEMIN_FICHIER_STL)
     # Calcule de la hauteur
-    hauteur_min, hauteur_max = geometrie.hauteur_min_max(parseur.triangles)
+    x_min, x_max, y_min, y_max, hauteur_min, hauteur_max =\
+                            geometrie.x_y_hauteur_min_max(parseur.triangles)
     hauteur_generale = hauteur_max - hauteur_min
     pas = hauteur_generale / float(NOMBRE_TRANCHES)
     # For _ in range ne fonctionne que sur des entiers
@@ -49,11 +59,13 @@ def main():
         nouvelle_hauteur = hauteur_actuelle + pas
         constantes_z.append(nouvelle_hauteur)
         hauteur_actuelle = nouvelle_hauteur
+    # Calculer le bon format
+    largeur, hauteur, coefficient = calculer_bon_format(x_min, x_max, y_min, y_max)
     # Tranches par tranches
     for indice, constante_z in enumerate(constantes_z):
         segments_coupes = geometrie.chercher_segments(parseur.triangles, constante_z)
         nom_fichier = "tranche_"+str(indice)+".svg"
-        svg.creer_tranche(HAUTEUR, LARGEUR, nom_fichier, segments_coupes, COEFFICIENT, [0, 255, 0])
+        svg.creer_tranche(hauteur, largeur, nom_fichier, segments_coupes, coefficient, [0, 255, 0])
 
 if __name__ == '__main__':
     main()

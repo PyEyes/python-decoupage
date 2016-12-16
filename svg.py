@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 
 """
-    Permet de créer les fichiers svg
+    Permet de créer les fichiers svg : ecriture directement
+    dans le fichier
 """
 
 def entete(largeur, hauteur):

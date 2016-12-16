@@ -50,7 +50,7 @@ def test_parser_stl():
 
 def test_colineaires():
     """
-        test colineaire
+        test colineaires
     """
     print(geometrie.colineaires([0, 1, 5], [5, 7, 8]))
     print(geometrie.colineaires([1, 1, 1], [2, 2, 2]))

@@ -1,13 +1,15 @@
 #! /usr/bin/env python3
 
 """
-    Structure des constructions geometriques de bases:
-        - Les Triangles, qui contiennent un vecteur normal en 3D et des points en 3D
+    Structure des constructions geometriques de bases
 """
 
 def colineaires(vecteur_un, vecteur_deux):
     """
-        Renvoit true si les deux vecteurs sont colineaires
+        Renvoit true si les deux vecteurs sont colineaires:
+        Pas utile ici au final, aurait ete utile si on utilisait
+        une methode de recherche d'intersections par Utilisation
+        des equations parametriques des plans
     """
     diviseurs = []
     for coord_un, coord_deux in zip(vecteur_un, vecteur_deux):
@@ -62,7 +64,8 @@ class Triangle:
         for couple in self.couples:
             # Equation parametrique en 3d
             couple.append(equation_droite_3d(couple[0], couple[1]))
-        # Equation de plan
+        # Equation de plan : Ici pas d'utilite dans ce type
+        # de detection d'intersections
         pts_a = self.points[0]
         equation_plan_constante = self.vecteur_normal[0]*pts_a[0] + \
                                 self.vecteur_normal[1]*pts_a[1] + \
@@ -73,7 +76,10 @@ class Triangle:
     def est_coupe_par_plan(self, constante_plan_z):
         """
             Renvoit les couples coupes par le plan vertical
-            d'equation z = constante_plan_z
+            d'equation z = constante_plan_z.
+            Un triangle est coupe si constante_plan_z est comprise
+            entre les deux hauteurs z de deux points qui constitue
+            un segment
         """
         # couple = [(xa, ya, za), (xb, yb, zb), (m, p)]
         segments_coupes = []
@@ -93,23 +99,43 @@ class Triangle:
         # Enleve les deux derniers caracteres
         return chaine[:-2]
 
-def hauteur_min_max(triangles):
+def x_y_hauteur_min_max(triangles):
     """
         Retourne la hauteur minimal et maximal
         des triangles
     """
     # Cas de base
+
+    x_min = float("+inf")
+    x_max = float("-inf")
+
+    y_min = float("+inf")
+    y_max = float("-inf")
+
     hauteur_min = float("+inf")
     hauteur_max = float("-inf")
 
     for triangle in triangles:
         for point in triangle.points:
+            # X
+            x_actuel = point[2]
+            if x_actuel > x_max:
+                x_max = x_actuel
+            if x_actuel < x_min:
+                x_min = x_actuel
+            # Y
+            y_actuel = point[2]
+            if y_actuel > y_max:
+                y_max = y_actuel
+            if y_actuel < y_min:
+                y_min = y_actuel
+            # Hauteur
             hauteur = point[2]
             if hauteur > hauteur_max:
                 hauteur_max = hauteur
             if hauteur < hauteur_min:
                 hauteur_min = hauteur
-    return hauteur_min, hauteur_max
+    return x_min, x_max, y_min, y_max, hauteur_min, hauteur_max
 
 def chercher_segments(triangles, constante_plan_z):
     """
