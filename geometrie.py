@@ -16,23 +16,75 @@ def colineaires(vecteur_un, vecteur_deux):
         else:
             diviseurs.append(None)
     print("Diviseurs : ", diviseurs)
-    return (diviseurs[0] == diviseurs[1] and diviseurs[0] == diviseurs[2])
-    
+    return diviseurs[0] == diviseurs[1] and diviseurs[0] == diviseurs[2]
+
+def equation_droite_3d(point_un, point_deux):
+    """
+        Renvoit l'equation parametrique d'une droite en 3D
+        sous la forme : (u0, u1, u2), (p0, p1, p2)
+        avec u le vecteur directeur et p le vecteur des constantes
+    """
+    vecteur_directeur = []
+    for coord_un, coord_deux in zip(point_un, point_deux):
+        vecteur_directeur.append(coord_deux - coord_un)
+    return vecteur_directeur, point_un
+
+def coordonnees_point_sur_droite(equation, constante_plan_z):
+    """
+        Renvoit les coordonnees d'un point sur un segment,
+        si ce segment est coupe par la constante plan_z.
+        Attention a verifier au prealable si le plan coupe la droite
+    """
+    # Decoupage de l'equation parametrique pour plus de lisibilite
+    vecteur_normal = equation[0]
+    vecteur_constantes = equation[1]
+    # Calcul des coordonnees
+    constante_k = (constante_plan_z - vecteur_constantes[2]) / vecteur_normal[2]
+    abcisse = constante_k*vecteur_normal[0] + vecteur_constantes[0]
+    ordonnee = constante_k*vecteur_normal[1] + vecteur_constantes[1]
+    return abcisse, ordonnee, constante_plan_z
+
 class Triangle:
     """
         Un triangle est compose de un vecteur normal
         et de 3 points, le tout en 3 dimensions
             => Arguments a passer de la forme : tuple = (x, y, z)
+        Utilisation des tuples au lieu des classes => optimisation
     """
     def __init__(self, p_liste_coordonnees):
-        # Utilisation des tuples au lieu des classes => optimisation
+        # Recuperation des arguments
         self.vecteur_normal = p_liste_coordonnees[0]
         self.points = p_liste_coordonnees[1:]
+        # Couples de points de chaque segment
+        # couple = [[xa, ya, za], [xb, yb, zb], [m, p]]
+        self.couples = [[self.points[0], self.points[1]],
+                        [self.points[1], self.points[2]],
+                        [self.points[0], self.points[2]]]
+        # Rajout dans couple de l'equation de droite de chaque segment
+        for couple in self.couples:
+            # Equation parametrique en 3d
+            couple.append(equation_droite_3d(couple[0], couple[1]))
+        # Equation de plan
         pts_a = self.points[0]
-        equation_constante = self.vecteur_normal[0]*pts_a[0] + \
+        equation_plan_constante = self.vecteur_normal[0]*pts_a[0] + \
                                 self.vecteur_normal[1]*pts_a[1] + \
                                     self.vecteur_normal[2]*pts_a[2]
-        self.equation = [self.vecteur_normal[0], self.vecteur_normal[1], equation_constante]
+        self.equation_plan = [self.vecteur_normal[0], self.vecteur_normal[1],\
+                                    equation_plan_constante]
+
+    def est_coupe_par_plan(self, constante_plan_z):
+        """
+            Renvoit les couples coupes par le plan vertical
+            d'equation z = constante_plan_z
+        """
+        # couple = [(xa, ya, za), (xb, yb, zb), (m, p)]
+        segments_coupes = []
+        for couple in self.couples:
+            entre_un_deux = (couple[0][2] <= constante_plan_z and constante_plan_z <= couple[1][2])
+            entre_deux_un = (couple[0][2] >= constante_plan_z and constante_plan_z >= couple[1][2])
+            if entre_un_deux or entre_deux_un:
+                segments_coupes.append(couple)
+        return segments_coupes
 
     def __str__(self):
         chaine = "n("+ ", ".join([str(round(e, 2)) for e in self.vecteur_normal])+"), "
@@ -48,15 +100,23 @@ class Intersector:
     """
         Gere les intersection entre un plan et une liste de triangle
     """
-    def __init__(self, p_triangles, p_coordonnes_plan):
+    def __init__(self, p_triangles, p_constante_plan_z):
         self.triangles = p_triangles
-        self.plan = p_coordonnes_plan
+        self.constante_plan_z = p_constante_plan_z
 
-    def iterateur_triangle_qui_coupent(self):
+    def lister_les_triangles_qui_coupent(self):
         """
-            Itere sur les triangles qui coupent le plan
-            Un triangle coupe le plan suivant s'il est au dessus ou en dessous
+            Retourne une liste de tous les triangles qui coupent
         """
+        for triangle in self.triangles:
+            segments_coupes = triangle.est_coupe_par_plan(self.constante_plan_z)
+            if segments_coupes != []:
+                # Segment = [couple_un, couple_deux]
+                for segment in segments_coupes:
+                    coordonnees_point_sur_droite(equation, self.constante_plan_z)
+
+
+
 
 
 
