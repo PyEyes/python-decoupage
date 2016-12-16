@@ -15,7 +15,6 @@ def colineaires(vecteur_un, vecteur_deux):
             diviseurs.append(coord_un/float(coord_deux))
         else:
             diviseurs.append(None)
-    print("Diviseurs : ", diviseurs)
     return diviseurs[0] == diviseurs[1] and diviseurs[0] == diviseurs[2]
 
 def equation_droite_3d(point_un, point_deux):
@@ -89,61 +88,54 @@ class Triangle:
     def __str__(self):
         chaine = "n("+ ", ".join([str(round(e, 2)) for e in self.vecteur_normal])+"), "
         for indice, vecteur in enumerate(self.points):
-            print("vecteur : ", vecteur)
             chaine += "vect_{}(".format(indice+1)
             chaine += ", ".join([str(round(e, 2)) for e in vecteur])
             chaine += "), "
         # Enleve les deux derniers caracteres
         return chaine[:-2]
 
-class Intersector:
+def hauteur_min_max(triangles):
     """
-        Gere les intersection entre un plan et une liste de triangle
+        Retourne la hauteur minimal et maximal
+        des triangles
     """
-    def __init__(self, p_triangles, p_constante_plan_z):
-        self.triangles = p_triangles
-        self.constante_plan_z = p_constante_plan_z
+    # Cas de base
+    hauteur_min = float("+inf")
+    hauteur_max = float("-inf")
 
-    def lister_les_triangles_qui_coupent(self):
-        """
-            Retourne une liste de tous les triangles qui coupent
-        """
-        for triangle in self.triangles:
-            segments_coupes = triangle.est_coupe_par_plan(self.constante_plan_z)
-            if segments_coupes != []:
-                # Segment = [couple_un, couple_deux]
-                for segment in segments_coupes:
-                    coordonnees_point_sur_droite(equation, self.constante_plan_z)
+    for triangle in triangles:
+        for point in triangle.points:
+            hauteur = point[2]
+            if hauteur > hauteur_max:
+                hauteur_max = hauteur
+            if hauteur < hauteur_min:
+                hauteur_min = hauteur
+    return hauteur_min, hauteur_max
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def chercher_segments(triangles, constante_plan_z):
+    """
+        Stocke dans une liste les points qui
+        delimitent les segments de crées par le plan
+    """
+    # Reset des segments
+    segments = []
+    # Parcours de tous les triangle
+    # Transformation du couple des segments coupés en deux points
+    for triangle in triangles:
+        # Cherche tous les segments qui sont coupes par le plan
+        segments_coupes = triangle.est_coupe_par_plan(constante_plan_z)
+        # Check si le triangle a bien ete coupé par le plan
+        if segments_coupes != []:
+            # Segment = [couple_un, couple_deux]
+            points = []
+            # Segments coupes: les deux segments decrit par un couple chacun
+            for couple in segments_coupes:
+                # couple = [point_un, point_deux, equation]
+                point = coordonnees_point_sur_droite(couple[2], constante_plan_z)
+                # point[:2] => abscisse et ordonnee
+                points.append(point[:2])
+            segments.append(points)
+    return segments
 
 
-
-
-
-
-
-# heyds
+    # EOF

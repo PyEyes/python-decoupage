@@ -5,67 +5,48 @@
 """
 
 import argparse
-from geometrie import Intersector, Triangle, colineaires
-from parser_stl import ParseurStl
+import geometrie
+import svg
+import parser_stl
 
+# TRAITEMENT DES ARGUMENTS
 PARSER_GENERAL = argparse.ArgumentParser()
 PARSER_GENERAL.add_argument('--chemin', type=str)
+PARSER_GENERAL.add_argument('-s', type=int)
 ARGUMENTS = PARSER_GENERAL.parse_args()
+# CONSTANTES
+if ARGUMENTS.s != None and ARGUMENTS.chemin != None:
+    CHEMIN_FICHIER_STL = ARGUMENTS.chemin
+    NOMBRE_TRANCHES = ARGUMENTS.s
+else:
+    CHEMIN_FICHIER_STL = "Tux_printable.stl"
+    NOMBRE_TRANCHES = 5
 
-def test_intersection():
-    """
-        Test les intersections entre un triangle et un plan
-    """
-    triangles_listes = []
-    vect_normal = [1, 1, 1]
-    # Points
-    # Triangle un coordonnees
-    pts_un = [0, 1, 2]
-    pts_deux = [0, 3, 4]
-    pts_trois = [0, 2, 15]
-    tri_coord_un = []
-    tri_coord_un.append(vect_normal)
-    tri_coord_un.append(pts_un)
-    tri_coord_un.append(pts_deux)
-    tri_coord_un.append(pts_trois)
-
-    tri_un = Triangle(tri_coord_un)
-    triangles_listes.append(tri_un)
-    # Calcule equation plan
-    print("Points A: ", tri_un.points[0])
-    print("Vecteur normal: ", tri_un.vecteur_normal)
-    print("Equation plan: ", tri_un.equation)
-    # Intersection
-    equation_plan = [0, 0, 1]
-    intersecteur = Intersector(triangles_listes, equation_plan)
-    resultat_intersection = intersecteur.intersection_triangle_plan(tri_un.equation, equation_plan)
-    print(resultat_intersection)
-
-def test_colinaires():
-    """
-        test colineaire
-    """
-    print(colineaires([0, 1, 5], [5, 7, 8]))
-    print(colineaires([1, 1, 1], [2, 2, 2]))
-
-def test_parser_stl():
-    """
-        Lecture rapide du contenu binaire du fichier stl
-    """
-    # Initialisation du parseur
-    parseur = ParseurStl(ARGUMENTS.chemin)
-    # Affichage des ses differentes caracteristiques
-    print("Nb triangle : ", parseur.nombre_triangle)
-    print("Triangle 1: ", str(parseur.triangles[0]))
+HAUTEUR = 600
+LARGEUR = 400
 
 def main():
     """
         Fonction principale qui lance les modules
     """
-    # print("Hello World !")
-    # test_parser_stl()
-    # test_intersection()
-    test_colinaires()
+    parseur = parser_stl.ParseurStl(CHEMIN_FICHIER_STL)
+    # Calcule de la hauteur
+    hauteur_min, hauteur_max = geometrie.hauteur_min_max(parseur.triangles)
+    hauteur_generale = hauteur_max - hauteur_min
+    pas = hauteur_generale / float(NOMBRE_TRANCHES)
+    # For _ in range ne fonctionne que sur des entiers
+    # Doit calculer une nouvelle liste pour calculer la constante
+    constantes_z = []
+    hauteur_actuelle = hauteur_min
+    while hauteur_actuelle < hauteur_max:
+        nouvelle_hauteur = hauteur_actuelle + pas
+        constantes_z.append(nouvelle_hauteur)
+        hauteur_actuelle = nouvelle_hauteur
+    # Tranches par tranches
+    for indice, constante_z in enumerate(constantes_z):
+        segments_coupes = geometrie.chercher_segments(parseur.triangles, constante_z)
+        nom_fichier = "tranche_"+str(indice)+".svg"
+        svg.creer_tranche(HAUTEUR, LARGEUR, nom_fichier, segments_coupes, [0, 255, 0])
 
 if __name__ == '__main__':
     main()
