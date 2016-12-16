@@ -5,6 +5,19 @@
         - Les Triangles, qui contiennent un vecteur normal en 3D et des points en 3D
 """
 
+def colineaires(vecteur_un, vecteur_deux):
+    """
+        Renvoit true si les deux vecteurs sont colineaires
+    """
+    diviseurs = []
+    for coord_un, coord_deux in zip(vecteur_un, vecteur_deux):
+        if coord_deux != 0:
+            diviseurs.append(coord_un/float(coord_deux))
+        else:
+            diviseurs.append(None)
+    print("Diviseurs : ", diviseurs)
+    return (diviseurs[0] == diviseurs[1] and diviseurs[0] == diviseurs[2])
+    
 class Triangle:
     """
         Un triangle est compose de un vecteur normal
@@ -31,19 +44,6 @@ class Triangle:
         # Enleve les deux derniers caracteres
         return chaine[:-2]
 
-def colineaires(vecteur_un, vecteur_deux):
-    """
-        Renvoit true si les deux vecteurs sont colineaires
-    """
-    diviseurs = []
-    for coord_un, coord_deux in zip(vecteur_un, vecteur_deux):
-        if coord_deux != 0:
-            diviseurs.append(coord_un/float(coord_deux))
-        else:
-            diviseurs.append(None)
-    print("Diviseurs : ", diviseurs)
-    return (diviseurs[0] == diviseurs[1] and diviseurs[0] == diviseurs[2])
-    
 class Intersector:
     """
         Gere les intersection entre un plan et une liste de triangle
@@ -52,22 +52,13 @@ class Intersector:
         self.triangles = p_triangles
         self.plan = p_coordonnes_plan
 
-    def intersection_triangle_plan(self, triangle, plan):
+    def iterateur_triangle_qui_coupent(self):
         """
-            Regarde si un triangle presente une intersection avec le plan ou non
+            Itere sur les triangles qui coupent le plan
+            Un triangle coupe le plan suivant s'il est au dessus ou en dessous
         """
-        # test des 3 cas
-        # Cas de base
-        #
-        #
-        # secants = True
-        # # Tester si colineaire
-        # if secants:
-        #     print("C'est secant")
-        # else:
-        #     print("Ce n'est pas secant")
 
-        pass
+
 
 
 
