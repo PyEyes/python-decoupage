@@ -17,12 +17,16 @@ PARSER_GENERAL.add_argument('stl_file', type=str, help="name of stl file to slic
 PARSER_GENERAL.add_argument('-s', '--slices', type=int, help="how many slices you want")
 ARGUMENTS = PARSER_GENERAL.parse_args()
 # CONSTANTES
-if ARGUMENTS.s != None and ARGUMENTS.stl_file != None:
+if  ARGUMENTS.stl_file != None:
     CHEMIN_FICHIER_STL = ARGUMENTS.stl_file
-    NOMBRE_TRANCHES = ARGUMENTS.s
 else:
     CHEMIN_FICHIER_STL = "Tux_printable.stl"
+
+if ARGUMENTS.s != None:
+    NOMBRE_TRANCHES = ARGUMENTS.slices
+else:
     NOMBRE_TRANCHES = 4
+
 
 HAUTEUR = 600
 LARGEUR = 400
