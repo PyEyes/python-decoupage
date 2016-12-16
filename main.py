@@ -10,17 +10,19 @@ import svg
 import parser_stl
 
 # TRAITEMENT DES ARGUMENTS
-PARSER_GENERAL = argparse.ArgumentParser()
-PARSER_GENERAL.add_argument('--chemin', type=str)
-PARSER_GENERAL.add_argument('-s', type=int)
+PARSER_GENERAL = argparse.ArgumentParser(description="slice an STL file", \
+                    epilog="slice given stlfile into SLICES horizontal slices.\
+                        Writes a numbered output svg file for each slice (horizontal way)")
+PARSER_GENERAL.add_argument('stl_file', type=str, help="name of stl file to slice (default is 4)")
+PARSER_GENERAL.add_argument('-s', '--slices', type=int, help="how many slices you want")
 ARGUMENTS = PARSER_GENERAL.parse_args()
 # CONSTANTES
-if ARGUMENTS.s != None and ARGUMENTS.chemin != None:
-    CHEMIN_FICHIER_STL = ARGUMENTS.chemin
+if ARGUMENTS.s != None and ARGUMENTS.stl_file != None:
+    CHEMIN_FICHIER_STL = ARGUMENTS.stl_file
     NOMBRE_TRANCHES = ARGUMENTS.s
 else:
     CHEMIN_FICHIER_STL = "Tux_printable.stl"
-    NOMBRE_TRANCHES = 5
+    NOMBRE_TRANCHES = 4
 
 HAUTEUR = 600
 LARGEUR = 400

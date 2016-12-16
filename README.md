@@ -1,2 +1,2 @@
 # python-decoupage
-Slicing d'un fichier STL pour permettre la stéréolithographie
+Slicing d'un fichier STL binaire pour permettre la stéréolithographie
