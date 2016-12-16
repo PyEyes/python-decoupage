@@ -22,7 +22,7 @@ if  ARGUMENTS.stl_file != None:
 else:
     CHEMIN_FICHIER_STL = "Tux_printable.stl"
 
-if ARGUMENTS.s != None:
+if ARGUMENTS.slices != None:
     NOMBRE_TRANCHES = ARGUMENTS.slices
 else:
     NOMBRE_TRANCHES = 4
