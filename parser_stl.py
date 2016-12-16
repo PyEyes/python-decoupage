@@ -1,12 +1,7 @@
 #! /usr/bin/env python3
 
 """
-    Module de parsing pour les fichiers stl
-    TODO : Stocker le segment d'intersection entre les deux plans
-            => Slicing par rapport a z
-            => Comment le stocker ? Equation ?
-            => Coordonnees points départ/arrivée en deux dimensionss
-            => Voir pour la notion d'echelle
+    Module de parsing pour les fichiers stl binaires
 """
 
 import struct

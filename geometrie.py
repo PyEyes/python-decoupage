@@ -47,7 +47,6 @@ class Triangle:
     """
         Un triangle est compose de un vecteur normal
         et de 3 points, le tout en 3 dimensions
-            => Arguments a passer de la forme : tuple = (x, y, z)
         Utilisation des tuples au lieu des classes => optimisation
     """
     def __init__(self, p_liste_coordonnees):

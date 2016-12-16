@@ -24,6 +24,7 @@ else:
 
 HAUTEUR = 600
 LARGEUR = 400
+COEFFICIENT = 80
 
 def main():
     """
@@ -46,7 +47,7 @@ def main():
     for indice, constante_z in enumerate(constantes_z):
         segments_coupes = geometrie.chercher_segments(parseur.triangles, constante_z)
         nom_fichier = "tranche_"+str(indice)+".svg"
-        svg.creer_tranche(HAUTEUR, LARGEUR, nom_fichier, segments_coupes, [0, 255, 0])
+        svg.creer_tranche(HAUTEUR, LARGEUR, nom_fichier, segments_coupes, COEFFICIENT, [0, 255, 0])
 
 if __name__ == '__main__':
     main()

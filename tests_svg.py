@@ -15,9 +15,7 @@ def test_svg(segments):
     """
         Test les svgs
     """
-    svg.entete(600, 400)
-    svg.affiche_polygon(segments, [0, 255, 0])
-    svg.fin()
+    svg.creer_tranche(600, 400, "triangle.svg", segments, 10, [0, 255, 0])
 
 def main():
     """
@@ -27,8 +25,8 @@ def main():
     point_un = [5, 3, 10]
     point_deux = [10, 2, 0]
     # Affichage triangle
-    test_svg([[point_zero[0], point_un[0]], [point_un[1], point_deux[1]],\
-                    [point_zero[2], point_deux[2]]])
+    test_svg([[point_zero, point_un], [point_un, point_deux],\
+                    [point_zero, point_deux]])
 
 
 if __name__ == '__main__':
